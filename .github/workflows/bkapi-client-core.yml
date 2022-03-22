@@ -1,0 +1,25 @@
+name: bkapi-client-core
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install tox
+        run: |
+          cd sdks/bkapi-client-core && pip install "tox>=3.23"
+      - name: Test
+        run: |
+          cd sdks/bkapi-client-core && make linter tox
